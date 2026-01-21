@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 
 // In-memory stores (best-effort; serverless instances are ephemeral)
-const RATE_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
-const RATE_LIMIT = 6; // max submissions per window per IP
+const SHORT_WINDOW_MS = 15 * 1000; // 15 seconds
+const SHORT_LIMIT = 1; // 1 submission per short window
+const LONG_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const LONG_LIMIT = 5; // 5 submissions per long window
 
 // Use globalThis to preserve across module reloads in dev
 if (!globalThis.__contact_rate__) {
-  // Map<ip, {count, firstTs}>
+  // Map<ip, { short: {count, firstTs}, long: {count, firstTs} }>
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   globalThis.__contact_rate__ = new Map();
@@ -19,7 +21,10 @@ if (!globalThis.__contact_cache__) {
   globalThis.__contact_cache__ = new Map();
 }
 
-const rateMap: Map<string, { count: number; firstTs: number }> = // eslint-disable-line no-underscore-dangle
+type RateBucket = { count: number; firstTs: number };
+type RateRecord = { short: RateBucket; long: RateBucket };
+
+const rateMap: Map<string, RateRecord> = // eslint-disable-line no-underscore-dangle
   // @ts-ignore
   globalThis.__contact_rate__;
 const recentCache: Map<string, number> = // eslint-disable-line no-underscore-dangle
@@ -38,10 +43,10 @@ function hashPayload(payload: unknown) {
 function cleanCache() {
   const now = Date.now();
   for (const [k, ts] of recentCache.entries()) {
-    if (now - ts > RATE_WINDOW_MS) recentCache.delete(k);
+    if (now - ts > LONG_WINDOW_MS) recentCache.delete(k);
   }
   for (const [ip, rec] of rateMap.entries()) {
-    if (now - rec.firstTs > RATE_WINDOW_MS) rateMap.delete(ip);
+    if (now - rec.long.firstTs > LONG_WINDOW_MS && now - rec.short.firstTs > LONG_WINDOW_MS) rateMap.delete(ip);
   }
 }
 
@@ -51,20 +56,31 @@ export async function POST(req: Request) {
 
     const ip = (req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown").split(",")[0].trim();
 
-    // Rate limiting (silent): increment and check
-    const entry = rateMap.get(ip);
+    // Rate limiting (short + long windows). Silent on exceed.
     const now = Date.now();
-    if (!entry) {
-      rateMap.set(ip, { count: 1, firstTs: now });
+    let record = rateMap.get(ip);
+    if (!record) {
+      record = { short: { count: 1, firstTs: now }, long: { count: 1, firstTs: now } };
+      rateMap.set(ip, record);
     } else {
-      if (now - entry.firstTs > RATE_WINDOW_MS) {
-        rateMap.set(ip, { count: 1, firstTs: now });
+      // Short window
+      if (now - record.short.firstTs > SHORT_WINDOW_MS) {
+        record.short = { count: 1, firstTs: now };
       } else {
-        entry.count += 1;
-        if (entry.count > RATE_LIMIT) {
-          // Silent rate limit: return generic success to avoid feedback
-          return NextResponse.json({ success: true });
-        }
+        record.short.count += 1;
+      }
+
+      // Long window
+      if (now - record.long.firstTs > LONG_WINDOW_MS) {
+        record.long = { count: 1, firstTs: now };
+      } else {
+        record.long.count += 1;
+      }
+
+      // Enforce limits
+      if (record.short.count > SHORT_LIMIT || record.long.count > LONG_LIMIT) {
+        // silent rate limit: return generic success to avoid feedback
+        return NextResponse.json({ success: true });
       }
     }
 
