@@ -1,26 +1,137 @@
+/* Tailwind base + utilities */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Neutral global styles (only):
+   - font import
+   - base body styles (font, bg, color)
+   - heading defaults
+   - link defaults
+   - readable main container
+*/
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  /* Box-sizing reset */
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
+
+  /* Full height root */
+  html, body, #__next {
+    height: 100%;
+  }
+
+  html {
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Smooth scrolling for in-page anchors */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Base body styles */
+  body {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #ffffff;
+    color: #111827;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Make media responsive */
+  img, picture, video, canvas, svg {
+    max-width: 100%;
+    display: block;
+  }
+
+  /* Form elements inherit font */
+  button, input, select, textarea {
+    font: inherit;
+  }
+
+  /* Headings: neutral, readable defaults */
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+    color: inherit;
+    line-height: 1.25;
+  }
+
+  h1 { font-size: 1.875rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+
+  /* Offset anchor targets for sticky header (adjust if header height changes) */
+  :target, h1[id], h2[id], h3[id] {
+    scroll-margin-top: 88px;
+  }
+
+  /* Links: keep color neutral but don't force an underline — use Tailwind hover classes */
+  a {
+    color: inherit;
+    text-decoration: none;
+    text-underline-offset: 2px;
+  }
+
+  /* Reveal animation defaults: GPU-accelerated, smooth easing */
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0,8px,0);
+    transition-property: opacity, transform;
+    transition-duration: 400ms;
+    transition-timing-function: cubic-bezier(0,0,0.2,1);
+    will-change: opacity, transform;
+  }
+
+  .reveal.reveal--visible {
+    opacity: 1;
+    transform: translate3d(0,0,0);
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      transition: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+  }
+
+  /* Accessible focus ring for keyboard users */
+  :where(a:focus-visible, button:focus-visible, [role="button"]:focus-visible) {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(99,102,241,0.14);
+    border-radius: 6px;
+  }
+
+    /* Page containers are handled by the PageContainer component; avoid
+      setting a global max-width here to let per-component layout control width. */
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Minimal prose styles for markdown content (lightweight alternative to Tailwind Typography) */
+.prose {
+  color: #0f172a;
+  font-size: 1rem;
+  line-height: 1.6;
 }
+.prose h1 { font-size: 2rem; margin-top: 0; margin-bottom: 0.5rem; }
+.prose h2 { font-size: 1.5rem; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+.prose h3 { font-size: 1.25rem; margin-top: 1rem; margin-bottom: 0.5rem; }
+.prose p { margin: 0 0 1rem 0; }
+.prose ul, .prose ol { margin: 0 0 1rem 1.25rem; }
+.prose li { margin: 0.35rem 0; }
+.prose hr { border: 0; height: 1px; background: #e6e7eb; margin: 2rem 0; }
+.prose a { color: #0f62fe; text-decoration: underline; }
+.prose .call-to-action {
+  display: inline-block;
+  background: #0f172a;
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+}
+
+
