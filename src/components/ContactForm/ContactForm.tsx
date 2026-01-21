@@ -29,9 +29,16 @@ export default function ContactForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, subject, message, phone: honeypot }),
       });
+      // Handle responses that may not be valid JSON (500, empty body, etc.)
+      const text = await res.text();
+      let json: any = null;
+      try {
+        json = text ? JSON.parse(text) : null;
+      } catch {
+        json = null;
+      }
 
-      const json = await res.json();
-      if (res.ok && json.success) {
+      if (res.ok && json && json.success) {
         if (isMounted.current) {
           setStatus("success");
           setName("");
@@ -41,7 +48,11 @@ export default function ContactForm() {
           setHoneypot("");
         }
       } else {
-        console.error(json);
+        // Log only generic diagnostic info (no user data)
+        // Prefer API-provided error string if available, otherwise log status code.
+        const diag = json && typeof json.error === "string" ? json.error : `status:${res.status}`;
+        // eslint-disable-next-line no-console
+        console.error("Contact API error:", diag);
         if (isMounted.current) setStatus("error");
       }
     } catch (err) {
