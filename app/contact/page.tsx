@@ -67,9 +67,9 @@ export default function ContactPage() {
                       <div>
                         <div className="text-sm font-medium">Location</div>
                         <div className="text-gray-700">
-                          <div>SaCHSWAL Office — Mafeteng Community Centre</div>
-                          <div>Mapholaneng, Mafeteng District, Lesotho</div>
-                          <div>P.O. Box 45, Mafeteng 900</div>
+                          <div>SaCHSWAL Office — Zille Building</div>
+                          <div>Mafeteng, Lesotho</div>
+                          <div>Mafeteng 900</div>
                         </div>
                       </div>
                     </li>

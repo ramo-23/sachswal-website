@@ -34,10 +34,10 @@ export default function LightboxModal({ items, currentIndex, onClose, onPrev, on
       <div tabIndex={0} onFocus={() => closeBtnRef.current?.focus()} aria-hidden="true" />
 
       <div ref={overlayRef} role="dialog" aria-modal="true" aria-label="Image viewer" className="relative max-w-5xl w-full mx-4 sm:mx-6">
-        <div className="rounded-lg overflow-hidden shadow-xl">
-          <div className="bg-black/95 rounded-t-lg">
-            <div className="relative flex items-center justify-center p-4">
-              <Image src={item.src} alt={item.shortDescription || item.title} width={1200} height={800} className="object-contain max-h-[80vh]" />
+        <div className="bg-white rounded-lg overflow-hidden shadow-xl">
+          <div className="bg-black rounded-t-lg flex items-center justify-center" style={{ minHeight: '60vh', maxHeight: '80vh' }}>
+            <div className="p-4 w-full flex items-center justify-center">
+              <Image src={item.src} alt={item.shortDescription || item.title} width={1200} height={800} className="object-contain max-h-[70vh] max-w-full" />
             </div>
 
             <button ref={closeBtnRef} onClick={onClose} className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white text-gray-800 focus:outline-none shadow-lg" aria-label="Close">
@@ -53,10 +53,10 @@ export default function LightboxModal({ items, currentIndex, onClose, onPrev, on
             </button>
           </div>
 
-          <div className="bg-white px-5 py-4 border-t">
+          <div className="bg-white px-5 py-3 border-t">
             <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
-            {item.shortDescription && <p className="text-sm text-slate-600 mt-2">{item.shortDescription}</p>}
-            <div className="text-xs text-slate-500 mt-3">{item.year}{item.location ? ` — ${item.location}` : ''}</div>
+            {item.shortDescription && <p className="text-sm text-slate-600 mt-1">{item.shortDescription}</p>}
+            <div className="text-xs text-slate-500 mt-2">{item.year}{item.location ? ` — ${item.location}` : ''}</div>
           </div>
         </div>
       </div>

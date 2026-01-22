@@ -9,6 +9,7 @@ export default function ContactForm() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [honeypot, setHoneypot] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const isMounted = useRef(true);
 
@@ -27,7 +28,7 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, subject, message, phone: honeypot }),
+      body: JSON.stringify({ name, email, subject, message, website: honeypot }),
       });
       // Handle responses that may not be valid JSON (500, empty body, etc.)
       const text = await res.text();
@@ -46,19 +47,27 @@ export default function ContactForm() {
           setSubject("");
           setMessage("");
           setHoneypot("");
+          setErrorMessage(null);
         }
       } else {
-        // Log only generic diagnostic info (no user data)
-        // Prefer API-provided error string if available, otherwise log status code.
-        const diag = json && typeof json.error === "string" ? json.error : `status:${res.status}`;
+        // Prefer API-provided `message` or `error` fields when available.
+        // Fallback to raw response text or HTTP status.
+        const serverMsg = json && (json.message || json.error) ? (json.message || json.error) : null;
+        const diag = serverMsg || text || `status:${res.status}`;
         // eslint-disable-next-line no-console
-        console.error("Contact API error:", diag);
-        if (isMounted.current) setStatus("error");
+        console.error("Contact API error:", diag, { status: res.status, body: json || text });
+        if (isMounted.current) {
+          setStatus("error");
+          setErrorMessage(serverMsg ? String(serverMsg) : (text ? String(text) : 'Unable to send message.'));
+        }
       }
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
-      if (isMounted.current) setStatus("error");
+      if (isMounted.current) {
+        setStatus("error");
+        setErrorMessage('Unable to send message.');
+      }
     }
   }
 
@@ -67,12 +76,12 @@ export default function ContactForm() {
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {/* Honeypot field - hidden from users */}
         <input
-          name="phone"
+          name="website"
           value={honeypot}
           onChange={(e) => setHoneypot(e.target.value)}
           autoComplete="off"
           tabIndex={-1}
-          aria-hidden
+          aria-hidden={true}
           style={{ display: "none" }}
         />
 
@@ -134,7 +143,7 @@ export default function ContactForm() {
         <div id="contact-status" className="text-sm mt-2 md:col-span-2" aria-live="polite">
           {status === "loading" && <span>Sending — please wait.</span>}
           {status === "success" && <span className="text-green-700">Message sent. Thank you!</span>}
-          {status === "error" && <span className="text-red-600">There was an error sending your message.</span>}
+          {status === "error" && <span className="text-red-600">{errorMessage || 'There was an error sending your message.'}</span>}
         </div>
       </div>
     </form>
