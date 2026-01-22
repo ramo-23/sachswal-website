@@ -3,54 +3,32 @@ import Image from "next/image";
 import Reveal from "../src/components/Reveal/Reveal";
 
 export default function Home() {
-  // Static home content — server-side markdown import removed
-
-
-
-  const services = [
-    { title: "Child Protection", body: "Professional social work interventions to protect vulnerable children." },
-    { title: "School Social Work", body: "Support within schools to address social and welfare needs." },
-    { title: "Residential Care Support", body: "Guidance and casework for children's homes and carers." },
-    { title: "Capacity Building", body: "Training and development for social workers and caregivers." },
-  ];
 
   return (
     <main>
-      <section aria-labelledby="hero-heading" className="hero bg-white border-b border-gray-200">
-        <div className="relative w-full h-105 md:h-140">
-
-          {/* Mobile: stacked text above image */}
-          <div className="max-w-350 mx-auto px-8 md:hidden py-8 text-center relative z-20">
-            <h1 id="hero-heading" className="text-2xl font-bold">Building children’s future together</h1>
-            <p className="mt-3 text-sm text-gray-700">SaCHSWAL is a legally registered social work organisation supporting children in schools and children’s homes across Lesotho through professional social work services.</p>
-            <div className="mt-6">
-              <Link href="/projects" className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-medium px-5 py-2 rounded-md shadow-sm transition-colors">Learn More</Link>
-            </div>
-          </div>
-
-          {/* Background image (object positioned slightly lower) */}
+      <section aria-labelledby="hero-heading" className="w-full relative">
+        <div className="relative w-full h-80 md:h-96 overflow-hidden">
+          {/* parallax image */}
           <Image
             src="/images/hero_image.jpg"
             alt="SaCHSWAL work with children"
             fill
-            className="object-cover z-0"
+            className="object-cover"
             sizes="100vw"
             style={{ objectPosition: 'center 35%' }}
           />
 
-          {/* Desktop overlay panel (pinned to left edge; card lowered within hero) */}
-          <div className="hidden md:flex absolute inset-0 items-start pt-20">
-            <div className="w-full px-0 flex justify-start">
-              <div className="max-w-md bg-white/85 backdrop-blur-sm p-8 shadow-md relative z-30">
-                <h1 id="hero-heading" className="text-4xl font-extrabold text-orange-600">Building children’s future together</h1>
-                <p className="mt-4 text-gray-700">SaCHSWAL is a legally registered social work organisation supporting children in schools and children’s homes across Lesotho through professional social work services.</p>
-                <div className="mt-6">
-                  <Link href="/projects" className="inline-block bg-linear-to-b from-orange-500 to-orange-600 text-white font-medium px-6 py-3 rounded-md shadow-sm hover:from-orange-600 hover:to-orange-700 transition-colors">Learn More</Link>
-                </div>
+          <div className="absolute inset-0 bg-black/40" />
+
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="max-w-300 mx-auto px-4 text-center text-white">
+              <h1 id="hero-heading" className="text-[28px] md:text-[44px] font-extrabold drop-shadow-lg">Building children’s future together</h1>
+              <p className="mt-4 max-w-180 mx-auto text-gray-100 text-lg">SaCHSWAL is a legally registered social work organisation supporting children in schools and children’s homes across Lesotho through professional social work services.</p>
+              <div className="mt-6">
+                <Link href="/projects" className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-md shadow-sm transition-colors">Learn More</Link>
               </div>
             </div>
           </div>
-
         </div>
       </section>
 

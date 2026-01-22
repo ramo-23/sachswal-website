@@ -49,7 +49,7 @@ export default function Header({ children }: { children?: ReactNode }) {
         ref={ref}
         className={`top-0 left-0 right-0 z-50 transition-colors duration-200 ${isFixed ? 'fixed bg-white/95 backdrop-blur-sm shadow-md border-b border-gray-200' : 'bg-transparent'}`}
       >
-        <div className="max-w-[1200px] mx-auto px-4 grid grid-cols-3 items-center gap-6 py-4">
+        <div className="max-w-300 mx-auto px-4 grid grid-cols-3 items-center gap-6 py-4">
 
           {/* Left: Logo / Organisation Name */}
           <div className="col-start-1">
@@ -64,6 +64,7 @@ export default function Header({ children }: { children?: ReactNode }) {
             <Link href="/" className={linkClass("/")}>Home</Link>
             <Link href="/about" className={linkClass("/about")}>About Us</Link>
             <Link href="/projects" className={linkClass("/projects")}>Programs & Services</Link>
+            <Link href="/partners" className={linkClass("/partners")}>Partners</Link>
             <Link href="/gallery" className={linkClass("/gallery")}>Gallery</Link>
             <Link href="/contact" className={linkClass("/contact")}>Contact</Link>
           </nav>

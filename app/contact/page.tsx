@@ -35,8 +35,8 @@ export default function ContactPage() {
                         <MdPerson className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-sm font-medium">Contact Person</div>
-                        <div className="text-gray-700">Tsepang Manyeli (Ms)</div>
+                          <div className="text-sm font-medium">Contact Person</div>
+                          <div className="text-gray-700">Tsepang Manyeli (Ms)</div>
                       </div>
                     </li>
 
@@ -66,7 +66,11 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <div className="text-sm font-medium">Location</div>
-                        <div className="text-gray-700">Mafeteng, Lesotho</div>
+                        <div className="text-gray-700">
+                          <div>SaCHSWAL Office — Mafeteng Community Centre</div>
+                          <div>Mapholaneng, Mafeteng District, Lesotho</div>
+                          <div>P.O. Box 45, Mafeteng 900</div>
+                        </div>
                       </div>
                     </li>
                   </ul>
